@@ -21,23 +21,6 @@ function Movies() {
       setAge(dataAge);
     }
     fetchData();
-
-    // const getOneMovie = async () => {
-    //   const res = await fetch(
-    //     `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=en-US`,
-    //   );
-    //   const data = await res.json();
-    //   setMovie(data);
-    // };
-    // getOneMovie();
-    // const getAge = async () => {
-    //   const resAge = await fetch(
-    //     `https://api.themoviedb.org/3/movie/${id}/release_dates?api_key=${API_KEY}`,
-    //   );
-    //   const dataAge = await resAge.json();
-    //   setAge(dataAge);
-    // };
-    // getAge();
   }, [id]);
 
   if (!movie) return <Preloader />;

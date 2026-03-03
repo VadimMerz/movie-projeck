@@ -49,6 +49,7 @@ export function MovieCard() {
     if (option === 'favourites') {
       setSearchQuery(name);
     } else {
+      handleSearch();
       searchMovie(name);
     }
   };
