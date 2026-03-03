@@ -2,9 +2,8 @@ import type { Movie } from '../types/movietype';
 import type { MovieAge } from '../types/movietype';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { API_KEY } from '../api';
+import { getOneMovie, getAge } from '../api';
 import { Preloader } from '../components/Preloader';
-
 
 function Movies() {
   const navigate = useNavigate();
@@ -15,22 +14,30 @@ function Movies() {
   const [age, setAge] = useState<MovieAge | null>(null);
 
   useEffect(() => {
-    const getOneMovie = async () => {
-      const res = await fetch(
-        `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=en-US`
-      );
-      const data = await res.json();
+    async function fetchData() {
+      const data = await getOneMovie(id);
       setMovie(data);
-    };
-    getOneMovie();
-    const getAge = async () => {
-      const resAge = await fetch(
-        `https://api.themoviedb.org/3/movie/${id}/release_dates?api_key=${API_KEY}`
-      );
-      const dataAge = await resAge.json();
+      const dataAge = await getAge(id);
       setAge(dataAge);
-    };
-    getAge();
+    }
+    fetchData();
+
+    // const getOneMovie = async () => {
+    //   const res = await fetch(
+    //     `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=en-US`,
+    //   );
+    //   const data = await res.json();
+    //   setMovie(data);
+    // };
+    // getOneMovie();
+    // const getAge = async () => {
+    //   const resAge = await fetch(
+    //     `https://api.themoviedb.org/3/movie/${id}/release_dates?api_key=${API_KEY}`,
+    //   );
+    //   const dataAge = await resAge.json();
+    //   setAge(dataAge);
+    // };
+    // getAge();
   }, [id]);
 
   if (!movie) return <Preloader />;
@@ -38,7 +45,6 @@ function Movies() {
   return (
     <>
       <div className='movie-title'>
-       
         <h2>{movie.title}</h2>
       </div>
       <div className='sec-card'>

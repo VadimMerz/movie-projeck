@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { API_URL, API_KEY } from '../api';
+import { getPopular, getTopRated, searchMovie } from '../api';
 import type { Movie } from '../types/movietype';
 import type { favMovie } from '../types/movietype';
 import { Search } from './Search';
@@ -25,41 +25,31 @@ export function MovieCard() {
   }, []);
 
   useEffect(() => {
-    const getMovie = async () => {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-      setMovie(data.results);
-    };
-
-    const getTopRatedMovie = async () => {
-      const resTopRated = await fetch(
-        `https://api.themoviedb.org/3/movie/top_rated?api_key=${API_KEY}&language=en-US&page=1`,
-      );
-      const dataTopRated = await resTopRated.json();
-      setMovie(dataTopRated.results);
-    };
-    if (option === 'top_rated') {
-      getTopRatedMovie();
-    } else {
-      getMovie();
+    async function fetchData() {
+      if (option === 'top_rated') {
+        const data = await getTopRated();
+        setMovie(data.results);
+      } else {
+        const data = await getPopular();
+        setMovie(data.results);
+      }
     }
+
+    fetchData();
     setSearchQuery('');
     setName('');
   }, [option]);
 
-  const SearchMovie = async () => {
-    const searchRes = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&query=${name}`,
-    );
-    const searchData = await searchRes.json();
-    setMovie(searchData.results);
-  };
+  async function handleSearch() {
+    const data = await searchMovie(name);
+    setMovie(data.results);
+  }
 
   const filterMovie = () => {
     if (option === 'favourites') {
       setSearchQuery(name);
     } else {
-      SearchMovie();
+      searchMovie(name);
     }
   };
 

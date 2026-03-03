@@ -2,7 +2,6 @@ import type { FavouritesProps } from '../types/movietype';
 
 function Favourites({
   movie,
-
   isHovered,
   setIsHovered,
   favourites,
