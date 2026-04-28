@@ -10,7 +10,6 @@ import { useGetPopular } from '../hooks/useGetPopular';
 import { useGetTopRated } from '../hooks/useGetTopRated';
 import { useSearchMovie } from '../hooks/useSearchMovie';
 import { MovieTable } from './MovieTable';
-import { Pagination } from './Pagination';
 
 export function MovieCard() {
   const [isHovered, setIsHovered] = useState<{
