@@ -3,10 +3,11 @@ import { Footer } from './components/Footer';
 import { Route, Routes } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Movies } from './pages/Movies';
+import { MovieContextProvider } from './context/MovieContextProvider';
 
 function App() {
   return (
-    <>
+    <MovieContextProvider>
       <Header />
       <main className='container content'>
         <Routes>
@@ -21,7 +22,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
-    </>
+    </MovieContextProvider>
   );
 }
 

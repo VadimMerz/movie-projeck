@@ -1,57 +1,40 @@
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { getPopular, getTopRated, searchMovie } from '../api';
-import type { Movie } from '../types/movietype';
-import type { favMovie } from '../types/movietype';
+import type { favMovie, Movie } from '../types/movietype';
 import { Search } from './Search';
 import { Changer } from './Changer';
+import { ChangerTable } from './ChangerTable';
 import { Favourites } from './Favourites';
+import { useMovieContext } from '../hooks/useMovieContext';
+import { useGetPopular } from '../hooks/useGetPopular';
+import { useGetTopRated } from '../hooks/useGetTopRated';
+import { useSearchMovie } from '../hooks/useSearchMovie';
+import { MovieTable } from './MovieTable';
+import { Pagination } from './Pagination';
 
 export function MovieCard() {
-  const [movie, setMovie] = useState<Movie[]>([]);
-  const [name, setName] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [option, setOption] = useState('popular');
   const [isHovered, setIsHovered] = useState<{
     id: number;
     hovered: boolean;
   } | null>(null);
-  const [favourites, setFavourites] = useState<favMovie[]>([]);
+  const context = useMovieContext();
+  const popularData = useGetPopular();
+  const topRatedData = useGetTopRated();
+  const searchData = useSearchMovie(context.searchQuery);
 
   useEffect(() => {
     const storedFavourites = localStorage.getItem('favourit');
     const favArray = storedFavourites ? JSON.parse(storedFavourites) : [];
-    setFavourites(favArray);
+    context.setFavourites(favArray);
   }, []);
 
   useEffect(() => {
-    async function fetchData() {
-      if (option === 'top_rated') {
-        const data = await getTopRated();
-        setMovie(data.results);
-      } else {
-        const data = await getPopular();
-        setMovie(data.results);
-      }
-    }
-
-    fetchData();
-    setSearchQuery('');
-    setName('');
-  }, [option]);
-
-  async function handleSearch() {
-    const data = await searchMovie(name);
-    setMovie(data.results);
-  }
+    context.setSearchQuery('');
+    context.setName('');
+  }, [context.option]);
 
   const filterMovie = () => {
-    if (option === 'favourites') {
-      setSearchQuery(name);
-    } else {
-      handleSearch();
-      searchMovie(name);
-    }
+    context.setSearchQuery(context.name);
   };
 
   function addMovieToLS(movie: favMovie): void {
@@ -69,30 +52,40 @@ export function MovieCard() {
 
     localStorage.setItem('favourit', JSON.stringify(newFav));
 
-    setFavourites(newFav);
+    context.setFavourites(newFav);
+  }
+  let data;
+  if (context.option === 'favourites') {
+    data = context.favourites.filter((f) =>
+      f.title
+        .trim()
+        .toLowerCase()
+        .includes(context.searchQuery.trim().toLowerCase()),
+    );
+  } else if (context.searchQuery !== '') {
+    data = searchData;
+  } else if (context.option === 'top_rated') {
+    data = topRatedData;
+  } else {
+    data = popularData;
   }
 
   return (
     <>
-      <Search
-        name={name}
-        setName={setName}
-        filterMovie={filterMovie}
-      />
-      <Changer
-        option={option}
-        setOption={setOption}
-      />
-      <div className='container'>
-        <div className='cards-grid'>
-          {(option === 'favourites' ? favourites : movie)
-            .filter((f) =>
-              f.title
-                .trim()
-                .toLowerCase()
-                .includes(searchQuery.trim().toLowerCase()),
-            )
-            .map((movies) => (
+      <Search filterMovie={filterMovie} />
+      <Changer />
+      <ChangerTable />
+      {context.tableOption === 'table' ? (
+        <MovieTable
+          data={data}
+          addMovieToLS={addMovieToLS}
+          isHovered={isHovered}
+          setIsHovered={setIsHovered}
+        />
+      ) : (
+        <div className='container'>
+          <div className='cards-grid'>
+            {(data ?? []).map((movies: Movie) => (
               <div
                 key={movies.id}
                 className='card'
@@ -118,16 +111,15 @@ export function MovieCard() {
                   <Favourites
                     movie={movies}
                     addMovieToLS={addMovieToLS}
-                    setFavourites={setFavourites}
-                    favourites={favourites}
                     isHovered={isHovered}
                     setIsHovered={setIsHovered}
                   />
                 </div>
               </div>
             ))}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

@@ -1,4 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
+import type { Table } from '@tanstack/react-table';
 
 interface Movie {
   title: string;
@@ -19,6 +20,23 @@ interface Movie {
   certification: string;
   budget: number;
 }
+type Genre = {
+  id: number;
+  name: string;
+};
+type ProductionCompany = {
+  id: number;
+  name: string;
+  logo_path: string;
+  origin_country: string;
+};
+type ReleaseDate = {
+  certification: string;
+};
+type CountryAge = {
+  iso_3166_1?: string;
+  release_dates: ReleaseDate;
+};
 
 interface MovieAge {
   results: {
@@ -29,8 +47,6 @@ interface MovieAge {
   }[];
 }
 interface SearchProps {
-  name: string;
-  setName: Dispatch<SetStateAction<string>>;
   filterMovie: (name: string) => void;
 }
 interface ChangeProps {
@@ -47,8 +63,31 @@ interface FavouritesProps {
   setIsHovered: Dispatch<
     SetStateAction<{ id: number; hovered: boolean } | null>
   >;
+}
+interface MovieContextType {
+  name: string;
+  setName: Dispatch<SetStateAction<string>>;
+  searchQuery: string;
+  setSearchQuery: Dispatch<SetStateAction<string>>;
+  option: string;
+  setOption: Dispatch<SetStateAction<string>>;
   favourites: favMovie[];
   setFavourites: Dispatch<SetStateAction<favMovie[]>>;
+  tableOption: string;
+  setTableOption: Dispatch<SetStateAction<string>>;
+}
+interface MovieTableProps {
+  data: Movie[];
+  addMovieToLS: (movie: favMovie) => void;
+
+  isHovered: { id: number; hovered: boolean } | null;
+  setIsHovered: Dispatch<
+    SetStateAction<{ id: number; hovered: boolean } | null>
+  >;
+}
+
+interface PaginationProps {
+  table: Table<Movie>;
 }
 
 export type {
@@ -58,4 +97,10 @@ export type {
   ChangeProps,
   FavouritesProps,
   favMovie,
+  MovieContextType,
+  Genre,
+  ProductionCompany,
+  CountryAge,
+  MovieTableProps,
+  PaginationProps,
 };

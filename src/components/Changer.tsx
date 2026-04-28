@@ -1,8 +1,10 @@
-import type { ChangeProps } from '../types/movietype';
+import { useMovieContext } from '../hooks/useMovieContext';
 
-function Changer({ option, setOption }: ChangeProps) {
+function Changer() {
+  const context = useMovieContext();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOption(e.target.value);
+    context.setOption(e.target.value);
   };
 
   return (
@@ -15,7 +17,7 @@ function Changer({ option, setOption }: ChangeProps) {
             type='radio'
             name='group1'
             value='popular'
-            checked={option === 'popular'}
+            checked={context.option === 'popular'}
           ></input>
           <span>
             {' '}
@@ -29,7 +31,7 @@ function Changer({ option, setOption }: ChangeProps) {
             type='radio'
             name='group1'
             value='top_rated'
-            checked={option === 'top_rated'}
+            checked={context.option === 'top_rated'}
           ></input>
           <span>
             <strong>Top Rated</strong>
@@ -42,7 +44,7 @@ function Changer({ option, setOption }: ChangeProps) {
             type='radio'
             name='group1'
             value='favourites'
-            checked={option === 'favourites'}
+            checked={context.option === 'favourites'}
           ></input>
           <span>
             <strong>Favourites</strong>

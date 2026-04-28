@@ -1,8 +1,10 @@
 import type { SearchProps } from '../types/movietype';
+import { useMovieContext } from '../hooks/useMovieContext';
 
-function Search({ name, setName, filterMovie }: SearchProps) {
+function Search({ filterMovie }: SearchProps) {
+  const context = useMovieContext();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    context.setName(e.target.value);
   };
 
   return (
@@ -10,10 +12,10 @@ function Search({ name, setName, filterMovie }: SearchProps) {
       <input
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            filterMovie(name);
+            filterMovie(context.name);
           }
         }}
-        value={name}
+        value={context.name}
         onChange={handleChange}
         type='text'
         placeholder='Find movie'
